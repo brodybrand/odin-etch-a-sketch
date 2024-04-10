@@ -2,8 +2,11 @@ const standardGridWidth = 16;
 const standardGridHeight = 16;
 let gridSize = (standardGridWidth, standardGridHeight);
 
+let defaultColor = "black";
+let randomColor = false;
+
 const container = document.querySelector(".container");
-function createGrid(width=standardGridWidth, height=standardGridHeight) {
+function createGrid(width=standardGridWidth, height=standardGridHeight, color) {
     for (i = 1; i < width + 1; i++) {
         const col = document.createElement('div')
         col.setAttribute('class', 'col');
@@ -18,7 +21,10 @@ function createGrid(width=standardGridWidth, height=standardGridHeight) {
     let cells = document.querySelectorAll(".cell");
     for (let i = 0; i < cells.length; i++) {
         cells[i].addEventListener("mouseenter", () => {
-            paintCell(cells[i], "yellow");
+            if (randomColor) {
+                paintCell(cells[i], randColorGenerator())
+            } else
+            paintCell(cells[i], defaultColor);
     });
     }
 }
@@ -32,10 +38,22 @@ function clearGrid() {
     for (i = 0; i < cols.length; i++) {
         cols[i].parentNode.removeChild(cols[i]);
     }
+    randomColor = false;
 }
 
 function paintCell(cell, color) {
     cell.style.backgroundColor = color;
+}
+
+function randColorGenerator() {
+    let r = randNumberGenerator(0, 255);
+    let g = randNumberGenerator(0, 255);
+    let b = randNumberGenerator(0, 255);
+    return ("rgb("+r + "," + g + "," + b + ")");
+}
+
+function randNumberGenerator(min, max) {
+    return Math.random() * (max - min) + min;
 }
 
 const resizeButton = document.querySelector("#resize");
@@ -55,7 +73,14 @@ resizeButton.addEventListener("click", () => {
 const resetButton = document.querySelector("#reset");
 resetButton.addEventListener("click", () => {
     clearGrid();
-    createGrid(gridSize, gridSize);
+    createGrid(gridSize, gridSize, defaultColor);
+})
+
+const rainbowButton = document.querySelector("#rainbow");
+rainbowButton.addEventListener("click", () => {
+    clearGrid();
+    randomColor = true;
+    createGrid(gridSize, gridSize, defaultColor);
 })
 
 createGrid();
